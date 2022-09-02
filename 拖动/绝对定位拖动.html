@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+  </div>
+
+  <script>
+    const box = document.querySelector('.box');
+    let isDragging = false;
+    box.addEventListener('mousedown', e => {
+      isDragging = true;
+      const rect = box.getBoundingClientRect();
+      const disX = e.clientX - rect.left;
+      const disY = e.clientY - rect.top;
+      const onMousemove = e => {
+        if (!isDragging) {
+          return;
+        }
+        box.style.left = e.clientX - disX + 'px';
+        box.style.top = e.clientY - disY + 'px';
+      };
+      const onMouseup = e => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMousemove);
+        document.removeEventListener('mouseup', onMouseup);
+      };
+
+      document.addEventListener('mousemove', onMousemove);
+      document.addEventListener('mouseup', onMouseup);
+    })
+  </script>
+</body>
+</html>
+
+
+<!-- 
+  拖动到左上角不会出现滚动条，右下角会出现滚动条。原因是：页面坐标以左上角为坐标原点
+
+ -->

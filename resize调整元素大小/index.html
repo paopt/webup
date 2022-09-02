@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      top: 200px;
+      left: 200px;
+      background-color: red;
+      cursor: move;
+    }
+
+    .edge-north {
+      position: absolute;
+      width: 100%;
+      height: 10px;
+      cursor: n-resize;
+    }
+    .edge-south {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 10px;
+      cursor: s-resize;
+    }
+    .edge-west {
+      position: absolute;
+      left: 0;
+      width: 10px;
+      height: 100%;
+      cursor: w-resize;
+    }
+    .edge-east {
+      position: absolute;
+      right: 0;
+      width: 10px;
+      height: 100%;
+      cursor: e-resize;
+    }
+    .edge-north-east {
+      position: absolute;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      z-index: 1;
+      cursor: ne-resize;
+    }
+    .edge-north-west {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      z-index: 1;
+      cursor: nw-resize;
+    }
+    .edge-south-east {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      z-index: 1;
+      cursor: se-resize;
+    }
+    .edge-south-west {
+      position: absolute;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      z-index: 1;
+      cursor: sw-resize;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="edge-north"></div>
+    <div class="edge-south"></div>
+    <div class="edge-west"></div>
+    <div class="edge-east"></div>
+    <div class="edge-north-east"></div>
+    <div class="edge-north-west"></div>
+    <div class="edge-south-east"></div>
+    <div class="edge-south-west"></div>
+  </div>
+
+  <script>
+    // 可以拖动， 调整元素大小
+    const boxEle = document.querySelector('.box');
+    let isDragging = false;
+    let rect;
+    let downEvent;
+
+    boxEle.addEventListener('mousedown', e => {
+      isDragging = true;
+      rect = boxEle.getBoundingClientRect();
+      downEvent = e;
+      console.log(rect);
+
+      const classList = e.target.classList;
+      let fn;
+
+      if (classList.contains('edge-north')) {
+        fn = onEdgeNorth;
+      } else if (classList.contains('edge-south')) {
+        fn = onEdgeSouth;
+      } else if (classList.contains('edge-west')) {
+        fn = onEdgeWest;
+      } else if (classList.contains('edge-east')) {
+        fn = onEdgeEast;
+      } else if (classList.contains('edge-north-east')) {
+        fn = onEdgeNorthEast;
+      } else if (classList.contains('edge-north-west')) {
+        fn = onEdgeNorthWest;
+      } else if (classList.contains('edge-south-east')) {
+        fn = onEdgeSouthEast;
+      } else if (classList.contains('edge-south-west')) {
+        fn = onEdgeSouthWest;
+      } else {
+        fn = onBoxMove;
+      }
+
+      const onMousemove = e => {
+        if (!isDragging) {
+          return;
+        }
+
+        fn & fn(e);
+      };
+
+      const onMouseup = e => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMousemove);
+        document.removeEventListener('mouseup', onMouseup);
+      };
+
+      document.addEventListener('mousemove', onMousemove);
+      document.addEventListener('mouseup', onMouseup);
+    });
+
+    function onBoxMove(e) {
+      const disX = downEvent.clientX - rect.left;
+      const disY = downEvent.clientY - rect.top;
+      boxEle.style.left = e.clientX - disX + 'px';
+      boxEle.style.top = e.clientY - disY + 'px';
+    }
+
+    function onEdgeNorth(e) {
+      const dis = downEvent.clientY - e.clientY;
+      const height = rect.height + dis;
+      boxEle.style.height = height + 'px';
+      boxEle.style.top = rect.bottom - height + 'px';
+    }
+
+    function onEdgeSouth(e) {
+      const dis = e.clientY - downEvent.clientY;
+      const height = dis + rect.height;
+      boxEle.style.height = height + 'px';
+    }
+    function onEdgeWest(e) {
+      const dis = downEvent.clientX - e.clientX;
+      const width = rect.width + dis;
+      boxEle.style.width = width + 'px';
+      boxEle.style.left = rect.right - width + 'px';
+    }
+
+    function onEdgeEast(e) {
+      const dis = e.clientX - downEvent.clientX;
+      const width = rect.width + dis;
+      boxEle.style.width = width + 'px';
+    }
+
+    function onEdgeNorthWest(e) {
+      onEdgeNorth(e);
+      onEdgeWest(e);
+    }
+    function onEdgeNorthEast(e) {
+      onEdgeNorth(e);
+      onEdgeEast(e);
+    }
+    function onEdgeSouthWest(e) {
+      onEdgeSouth(e);
+      onEdgeWest(e);
+    }
+    function onEdgeSouthEast(e) {
+      onEdgeSouth(e);
+      onEdgeEast(e);
+    }
+  </script>
+</body>
+</html>

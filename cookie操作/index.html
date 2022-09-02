@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <button id="delete">删除cookie</button>
+  <script>
+    document.cookie = 'a=杭州;'
+    document.cookie = 'b=2;'
+    console.log('cookie: ', document.cookie);
+
+    const cookie = document.cookie;
+    const arr = cookie.split('; ');
+    const obj = {};
+    arr.forEach(item => {
+      const pair = item.split('=');
+      obj[pair[0]] = pair[1];
+    });
+
+    console.log('解析cookei: ', obj);
+
+    const ele = document.getElementById('delete');
+    ele.addEventListener('click', e => {
+      // 设置过期时间,其他参数和设置时一样
+      document.cookie = 'b=2;max-age=0';
+
+      console.log('删除b: ', document.cookie);
+    })
+
+
+
+
+  </script>
+</body>
+</html>

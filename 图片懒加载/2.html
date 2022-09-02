@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    img {
+      width: 200px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <img data-src="./img/1.jpg" >
+  <img data-src="./img/2.jpg" >
+  <img data-src="./img/3.webp" >
+  <img data-src="./img/4.webp" >
+  <img data-src="./img/5.webp" >
+  <img data-src="./img/6.webp" >
+  <img data-src="./img/7.webp" >
+  <img data-src="./img/8.webp" >
+  <img data-src="./img/9.webp" >
+  <img data-src="./img/10.webp" >
+
+
+  <script>
+    let options = {
+      rootMargin: '0px',
+      threshold: 0.5
+    }
+    
+    let observer = new IntersectionObserver(callback, options);
+
+    function callback(entries, observe) {
+      entries.forEach(item => {
+      let target = item.target
+      if(item.isIntersecting && target.dataset.src) {
+          target.src = target.dataset.src
+          // 删除data-src属性
+          target.removeAttribute('data-src')
+          // 取消观察
+          observe.unobserve(item.target)
+        
+      }
+     })
+    }
+
+    const imgs = document.querySelectorAll('img');
+    imgs.forEach(item => {
+      observer.observe(item);
+    })
+  </script>
+
+  </scrip>
+</body>
+</html>

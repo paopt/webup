@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .box {
+      display: grid;
+      /* 每行高度 */
+      grid-template-rows: 100px 100px 100px;
+
+      /* 每列宽度 */
+      grid-template-columns: 100px 100px 100px;
+      
+      /* 自动填充，容纳容纳更多的单元格 */
+      /* grid-template-columns: repeat(auto-fill, 100px);  */
+      
+      /* 列间隔 */
+      column-gap: 10px;
+      
+      /* 行间隔 */
+      row-gap: 10px;
+      
+      
+      /* gap: 10px; */
+    }
+
+    .cell {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+</body>
+</html>
+
+
+<!-- 
+  flex是轴线布局，可以看作一维布局
+  grid将容器划分为行和列，产生单元格，是二维布局
+ -->

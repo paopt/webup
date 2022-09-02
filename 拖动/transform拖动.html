@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    .box {
+      /* position: absolute; */
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+  </div>
+
+  <script>
+    const box = document.querySelector('.box');
+    let isDragging = false;
+    const rect = box.getBoundingClientRect();
+    box.addEventListener('mousedown', e => {
+      isDragging = true;
+      const mrect = box.getBoundingClientRect();
+      const disX = e.clientX - mrect.left;
+      const disY = e.clientY - mrect.top;
+      console.log(mrect);
+      const onMousemove = e => {
+        if (!isDragging) {
+          return;
+        }
+        const disx = e.clientX - disX - rect.left + 'px';
+        const disy = e.clientY - disY - rect.top + 'px';
+        box.style.transform = `translate(${disx},${disy})`;
+      };
+      const onMouseup = e => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMousemove);
+        document.removeEventListener('mouseup', onMouseup);
+      };
+
+      document.addEventListener('mousemove', onMousemove);
+      document.addEventListener('mouseup', onMouseup);
+    })
+  </script>
+</body>
+</html>

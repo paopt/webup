@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <textarea cols="30" rows="10">dasvsdvsd</textarea>
+  <button id="btn">复制</button>
+  <button id="btn2">动态复制</button>
+
+
+  <script>
+    const ele = document.querySelector('#btn');
+    const ele2 = document.querySelector('#btn2');
+    ele.addEventListener('click', e => {
+      const textarea = document.querySelector('textarea');
+      textarea.select();
+      document.execCommand('copy'); // 剪切用cut
+    });
+
+    ele2.addEventListener('click', e => {
+      copy('copy content plus');
+    });
+
+    // 创建input标签，插入body， 选中， 执行复制命令， 删除input
+    function copy(str) {
+      const input = document.createElement('textarea');
+      document.body.append(input);
+      input.value = str;
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+  </script>
+</body>
+</html>

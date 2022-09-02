@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+    }
+
+    .container {
+      width: 100%;
+      height: 400px;
+      margin-top: 20px;
+      border: 1px solid blue;
+    }
+  </style>
+</head>
+<body>
+  <div class="box" draggable="true">
+    可拖拽
+  </div>
+  <!-- <a href="http://www.baidu.com" class="box">可拖拽</a> -->
+  <div class="container">
+  </div>
+
+  <script>
+    const boxEle = document.querySelector('.box');
+    const containerEle = document.querySelector('.container');
+
+    let dragEle;
+
+    // 文件拖拽不会触发dragstart，dragend
+    boxEle.addEventListener('dragstart', e => {
+      dragEle = e.target;
+      console.log('dragstart');
+      event.dataTransfer.setData('text/plain', 'Text to drag');
+      // 设置数据
+    });
+    boxEle.addEventListener('drag', e => {
+      console.log('drag');
+    });
+    boxEle.addEventListener('dragend', e => {
+      console.log('dragend');
+    });
+    containerEle.addEventListener('dragenter', e => {
+      // e.preventDefault();
+      e.target.style.background = 'gray';
+    });
+    // 默认设置为不允许接受被拖拉的元素，如果想在目标元素上放下数据，必须阻止事件的默认行为
+    containerEle.addEventListener('dragover', e => {
+      e.dataTransfer.dropEffect = 'link';
+      e.preventDefault();
+      // 取出数据，判断是否允许拖拽
+    });
+    containerEle.addEventListener('dragleave', e => {
+      e.target.style.background = '';
+    });
+    containerEle.addEventListener('drop', e => {
+      e.preventDefault();
+      const target = e.target;
+      target.appendChild(dragEle);
+      target.style.background = '';
+      console.log(e.dataTransfer.getData('text/plain'));
+
+      // 取出数据
+    });
+
+    // DataTransfer
+    // setData(mime, data), getData(), clearData(), 
+    // files, 文件数组
+
+  </script>
+</body>
+</html>

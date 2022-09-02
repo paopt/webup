@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <p>控制台输出</p>
+  <script>
+    const url = 'http://www.baidu.com?q=杭州&year=2022&加班=不';
+    
+    // 方法一, URL对象, URLSearchParams
+    
+    function fn1(url) {
+      const obj = new URL(url);
+      const searchParams = obj.searchParams;
+      for (let k of searchParams.keys()) {
+        console.log(k, searchParams.get(k));
+      }
+
+      const sp = new URLSearchParams('?a=1&b=2'); // 没有?也可以
+      for (const k of sp.keys()) {
+        console.log(k, sp.get(k));
+      }
+    }
+
+    // 方法二，原生实现
+    function fn2(url) {
+      const index = url.indexOf('?');
+      const search = url.substring(index + 1);
+      if (search) {
+        const arr = search.split('&');
+        const obj = {};
+        arr.forEach(item => {
+          const pair = item.split('=');
+          obj[pair[0]] = decodeURIComponent(pair[1]);
+        });
+        console.log(obj);
+      }
+    }
+
+    fn1(url);
+    
+  </script>
+</body>
+</html>
