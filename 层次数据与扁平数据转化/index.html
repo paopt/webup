@@ -45,58 +45,88 @@
         },
       ];
 
-      // 广度优先遍历
-      // function flatTree(data, result, index) {
-      //   const newData = []; // 遍历过程中，有子节点的节点集合
-      //   data.forEach(item => {
-      //     item.index = index;
-      //     result.push(item);
-      //     if (item.children) {
-      //       newData.push(...item.children);
-      //     }
-      //   });
-      //   if (newData.length) {
-      //     index++;
-      //     flatTree(newData, result, index);
-      //   }
-      // }
-
       // 层次数据 => 扁平数据
       function flatTree(data, result, index) {
         const newData = []; // 遍历过程中，有子节点的节点集合
-        data.forEach(item => {
-          item.index = index;
-          result.push(item);
+        data.forEach((item) => {
+          result.push({
+            name: item.name,
+            index: index,
+          });
           if (item.children) {
             flatTree(item.children, result, index + 1);
           }
         });
       }
-      
+
+      // 扁平数据 => 层次数据
+      function tree(data) {
+        let queue = [];
+        let result = [];
+        let lastIndex = 0;
+        for (let item of data) {
+          if (item.index === 0) {
+            newItem = {
+              name: item.name,
+              children: [],
+            };
+            result.push(newItem);
+            queue = [newItem.children];
+          } else {
+            if (item.index > lastIndex) {
+              const arr = queue[queue.length - 1];
+              newItem = {
+                name: item.name,
+                children: [],
+              };
+              arr.push(newItem);
+              queue.push(newItem.children);
+            } else if (item.index < lastIndex) {
+              queue.length = item.index;
+              const arr = queue[queue.length - 1];
+              newItem = {
+                name: item.name,
+                children: [],
+              };
+              arr.push(newItem);
+              queue.push(newItem.children);
+            } else if (item.index === lastIndex) {
+              queue.pop();
+              const arr = queue[queue.length - 1];
+              newItem = {
+                name: item.name,
+                children: [],
+              };
+              arr.push(newItem);
+              queue.push(newItem.children);
+            }
+          }
+          lastIndex = item.index;
+        }
+        return result;
+      }
+
       const result = [];
 
-      console.log('原数据: ', data)
+      console.log("原数据: ", data);
       flatTree(data, result, 0);
-      console.log('目标数据： ', result);
+      console.log("目标数据： ", result);
 
-
+      const treeRes = tree(result);
+      console.log("还原数据： ", treeRes);
 
       // [
-      //   {name: '浙江省', children: Array(3), index: 0},
-      //   {name: '杭州市', children: Array(2), index: 1},
+      //   {name: '浙江省', index: 0},
+      //   {name: '杭州市', index: 1},
       //   {name: '西湖区', index: 2},
       //   {name: '滨江区', index: 2},
       //   {name: '宁波市', index: 1},
       //   {name: '嘉兴市', index: 1},
-      //   {name: '河南省', children: Array(2), index: 0},
+      //   {name: '河南省', index: 0},
       //   {name: '郑州市', index: 1},
       //   {name: '周口市', index: 1}
       // ]
 
-      // 扁平数据 => 层次数据
-      function tree(data) {
-
-      }
     </script>
   </body>
 </html>

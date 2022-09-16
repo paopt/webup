@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>点击复制</title>
 </head>
 <body>
   <textarea cols="30" rows="10">dasvsdvsd</textarea>
-  <button id="btn">复制</button>
-  <button id="btn2">动态复制</button>
+  <button id="btn">复制</button><br>
+  hello
+  <button id="btn2">复制</button>
 
 
   <script>
@@ -22,12 +23,12 @@
     });
 
     ele2.addEventListener('click', e => {
-      copy('copy content plus');
+      copy('hello');
     });
 
     // 创建input标签，插入body， 选中， 执行复制命令， 删除input
     function copy(str) {
-      const input = document.createElement('textarea');
+      const input = document.createElement('input');
       document.body.append(input);
       input.value = str;
       input.select();

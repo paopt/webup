@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖</title>
+</head>
+<body>
+  <div>
+    正常<br>
+    <input type="text" id="input" autocomplete="off"><br>
+    值： <span id="value"></span>
+  </div>
+
+  <div style="margin-top: 50px;">
+    防抖(就是停止输入一段时间后执行，如果一直输入就不会执行)<br>
+    <input type="text" id="input2"><br>
+    值： <span id="value2"></span>
+  </div>
+
+  <script>
+    const input = document.querySelector('#input');
+    const ele = document.querySelector('#value');
+    input.addEventListener('input', e => {
+      ele.textContent = input.value;
+    });
+
+    const input2 = document.querySelector('#input2');
+    const ele2 = document.querySelector('#value2');
+
+    let fn = debounce(() => {
+      ele2.textContent = input2.value;
+    }, 2000);
+
+    // 实现的非常简单，有的防抖可能会考虑开始、结束的情况，这种实现起来比较复杂。比如underscore
+    function debounce(fn, interval) {
+      let timer;
+      return function() {
+        clearTimeout(timer);
+        timer = setTimeout(fn, interval);
+      };
+    }
+
+    input2.addEventListener('input', e => {
+      fn();
+    });
+  </script>
+</body>
+</html>

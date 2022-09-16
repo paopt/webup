@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>虚拟滚动-不定高</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .item {
+        border-bottom: 2px solid black;
+      }
+
+      .container {
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .wrap {
+        position: relative;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <div class="wrap" id="wrap">
+        <div class="item" id="top"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item" id="down"></div>
+        <!-- 保证上下元素一屏放不下 -->
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item" id="bottom"></div>
+      </div>
+    </div>
+    <script>
+      function throttle(fn, wait) {
+        let timeout;
+        return function () {
+          const ctx = this;
+          const args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            fn.apply(ctx, args);
+          }, wait);
+        };
+      }
+
+      // 总数据
+      const arr = [];
+      for (let i = 0; i < 20000; i++) {
+        const height = Math.random() > 0.5 ? 100 : 200;
+        arr.push({
+          height,
+          value: '列表' + i
+        });
+      }
+
+      // 已加载数据
+      const currentArr = arr.slice(0, 40);
+      // 显示固定数量
+      const NODENUM = 20;
+
+      // 第几屏
+      let page = 1; 
+      let start = 0;
+      let end = 20;
+      let paddingTop = 0;
+      let paddingBottom = 0;
+      let observer = null;
+
+      const topEle = document.querySelector("#top");
+      const bottomEle = document.querySelector("#bottom");
+      const downEle = document.querySelector("#down");
+      const wrapEle = document.querySelector("#wrap");
+      const containerEle = document.querySelector("#container");
+
+      const config = {
+        isRequesting: false,
+        paddingTopArr: [],
+        paddingBottomArr: [],
+        preScrollTop: 0,
+        syncStart: 0,
+        setting: false,
+      };
+
+      // 更新数据, isDown, 向下滚动
+      const update = (newStart, newEnd, isDown) => {
+        if (config.setting) {
+          return;
+        }
+        config.syncStart = newStart;
+        if (start !== newStart && end !== newEnd) {
+          config.setting = true;
+          start = newStart;
+          end = newEnd;
+          const page = newStart / 10 - 1;
+          if (isDown) {
+            //向下
+            if (newStart !== 0 && !config.paddingTopArr[page]) {
+              config.paddingTopArr[page] = downEle.offsetTop;
+            }
+            paddingTop = config.paddingTopArr[page];
+            paddingBottom = config.paddingBottomArr[page] || 0;
+            console.log('向下', start, config.paddingTopArr);
+          } else {
+            //向上
+            const newPaddingBottom = wrapEle.scrollHeight - downEle.offsetTop;
+            if (newStart !== 0) {
+              config.paddingBottomArr[page] = newPaddingBottom;
+            }
+            paddingTop = config.paddingTopArr[page] || 0;
+            paddingBottom = config.paddingBottomArr[page];
+            console.log('向上', start, config.paddingBottomArr);
+          }
+          setTimeout(() => {
+            config.setting = false;
+          }, 0);
+
+          wrapEle.style.paddingBottom = paddingBottom + 'px';
+          wrapEle.style.paddingTop = paddingTop + 'px';
+          for (let i = start; i < end; i++) {
+            const obj = currentArr[i];
+            const ele = wrapEle.children[i-start];
+            ele.style.height = obj.height + 'px';
+            ele.textContent = obj.value;
+          }
+        }
+      };
+
+      const resetObservation = () => {
+        observer && observer.unobserve(bottomEle);
+        observer && observer.unobserve(topEle);
+      };
+      
+      const callback = (entries) => {
+        entries.forEach((entry, index) => {
+          const len = currentArr.length;
+          if (entry.isIntersecting && entry.target.id === "bottom") {
+            // 索引增加10,并处理边界条件
+            const maxStart = end -1;
+            const maxEnd = len - 1;
+            const newStart = end - 10 <= maxStart ? end - 10 : maxStart;
+            const newEnd = end + 10 <= maxEnd ? end + 10 : maxEnd;
+            if (newEnd + 10 >= maxEnd && !config.isRequesting) {
+              currentArr.push(...arr.slice(page * 40, (page + 1) * 40));
+              page++;
+            }
+            if (end + 10 > maxEnd) {
+              return;
+            }
+            update(newStart, newEnd, true);
+            // resetObservation();
+          }
+          if (entry.isIntersecting && entry.target.id === "top") {
+            // 索引进去10
+            const newEnd = end - 10 > NODENUM ? end - 10 : NODENUM;
+            const newStart = start > 10 ? start - 10 : 0;
+            update(newStart, newEnd, false);
+          }
+        });
+      };
+      
+      const initObserver = () => {
+        const options = {
+          root: containerEle,
+          thresholds: 0.1,
+        };
+        observer = new IntersectionObserver(callback, options);
+        if (topEle) {
+          observer.observe(topEle);
+        }
+
+        if (bottomEle) {
+          observer.observe(bottomEle);
+        }
+      };
+      
+      const handleScroll = throttle(e => {
+        const scrollTop = containerEle.scrollTop;
+        let index = config.paddingTopArr.findIndex(v => v > scrollTop);
+        index = index <= 0 ? 0 : index;
+        const len = config.paddingTopArr.length;
+        if (len && config.paddingTopArr[len - 1] < scrollTop) {
+          index = len;
+        }
+        const newStart = index * 10;
+        const newEnd = newStart + NODENUM;
+        if (newStart === config.syncStart) {
+          config.preScrollTop = scrollTop;
+          return;
+        }
+        update(newStart, newEnd, scrollTop > config.preScrollTop);
+        config.preScrollTop = scrollTop;
+      }, 100);
+      
+      containerEle.addEventListener('scroll', handleScroll);
+
+      initObserver();
+      for (let i = start; i < end; i++) {
+        const obj = currentArr[i];
+        const ele = wrapEle.children[i-start];
+        ele.style.height = obj.height + 'px';
+        ele.textContent = obj.value;
+      }
+    </script>
+  </body>
+</html>

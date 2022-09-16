@@ -1,0 +1,151 @@
+复习知识点
+1、
+slice: 截取数组,不改变原数组
+splice: 删除元素
+
+2、
+鼠标， mouseenter， mouseleave， mouseover， mouseout
+
+4
+scroll
+
+5、
+键盘事件由用户击打键盘触发，主要有keydown、keypress、keyup三个事件，它们都继承了KeyboardEvent接口。
+keydown：按下键盘时触发。
+keypress：按下有值的键时触发，即按下 Ctrl、Alt、Shift、Meta 这样无值的键，这个事件不会触发。对于有值的键，按下时先触发keydown事件，再触发这个事件。
+keyup：松开键盘时触发该事件。
+如果用户一直按键不松开，就会连续触发键盘事件，触发的顺序如下。
+
+keydown
+keypress
+keydown
+keypress
+...（重复以上过程）
+keyup
+
+keyCode，编码
+
+6、
+
+创建指定大小的数组: new Array(100)
+
+7、
+什么时候加载图片
+1、图片标签，显示与否都会加载图片
+2、动态创建img标签，不插入dom中,也加载
+3、背景图片，dom隐藏不会加载
+
+8、
+各种高度、坐标计算
+dom元素：
+client， 块级元素有效, 只读
+clientWidth， clientHeight, 宽高，包括padding + content。不包括border、margin。如果有水平滚动条，还要减去水平滚动条的高度
+clientLeft, clientTop, 边框
+
+offset:
+offsetWidth， offsetHeight，宽高，包括border，滚动条
+offsetLeft，offsetTop，相对offsetParent的距离。
+offsetParent：
+最靠近当前元素的、并且 CSS 的position属性不等于static的上层元素。最终到body
+元素左上角相对于整张网页的坐标。
+
+function getElementPosition(e) {
+  var x = 0;
+  var y = 0;
+  while (e !== null)  {
+    x += e.offsetLeft;
+    y += e.offsetTop;
+    e = e.offsetParent;
+  }
+  return {x: x, y: y};
+}
+scroll:
+scrollWidth, scrollHeight, 包括padding，伪元素，不包括边框、滚动条
+scrollLeft, scrollTop, 滚动距离
+
+
+9、
+
+鼠标事件
+click：按下鼠标（通常是按下主按钮）时触发。
+dblclick：在同一个元素上双击鼠标时触发。
+mousedown：按下鼠标键时触发。
+mouseup：释放按下的鼠标键时触发。
+contextmenu：按下鼠标右键时（上下文菜单出现前）触发，或者按下“上下文”菜单键时触发。
+wheel：滚动鼠标的滚轮时触发，该事件继承的是WheelEvent接口。
+
+鼠标移动相关事件；
+mouseenter(进入)，mouseleave(离开)， 触发一次，子节点不会触发。可能是不会冒泡
+mouseover（进入），mouseout（离开）, 多次触发，子节点会触发
+
+
+clientX， clientY，浏览器窗口左上角，也就是视口左上角
+screenX, screenY， 屏幕左上角
+offsetX, offsetY，目标节点padding边缘左上角
+pageX， pageY， 文档左上角，包括不可见部分
+relatedTarget，相关节点
+movementX属性返回当前位置与上一个mousemove事件之间的水平距离（单位像素）。数
+
+10、
+大图片加载优化
+
+
+11、
+background-clip: border-box(默认)/padding-box/content-box;背景绘制区域
+
+12、
+box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+
+阴影的 X 轴偏移量、Y 轴偏移量、模糊半径（越大越模糊）、阴影扩散半径和颜色。
+
+
+13、
+scrollIntoView(alignTop)
+滚动容器，使子元素可见
+alignTop，布尔值，true表示顶部对齐，false底部对齐
+ele.scrollIntoView(true)等于：
+ele.scrollIntoView({
+  block: 'start'
+})
+
+14、
+intersectionObserver
+
+提供了一种异步观察目标元素与其祖先元素或顶级文档视窗 (viewport) 交叉状态的方法。祖先元素与视窗 (viewport) 被称为**根 (root)。
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach((entry) {
+
+  })
+}, {
+root
+监听元素的祖先元素Element对象，其边界盒将被视作视口。目标在根的可见区域的的任何不可见部分都会被视为不可见。
+
+rootMargin
+一个在计算交叉值时添加至根的边界盒 (bounding_box (en-US)) 中的一组偏移量，类型为字符串 (string) ，可以有效的缩小或扩大根的判定范围从而满足计算需要。语法大致和 CSS 中的margin 属性等同; 可以参考 Intersection Observer API 中的 The root element and root margin来深入了解 margin 的工作原理及其语法。默认值是"0px 0px 0px 0px"。
+
+threshold
+规定了一个监听目标与边界盒交叉区域的比例值，可以是一个具体的数值或是一组 0.0 到 1.0 之间的数组。若指定值为 0.0，则意味着监听元素即使与根有 1 像素交叉，此元素也会被视为可见。若指定值为 1.0，则意味着整个元素都在可见范围内时才算可见。可以参考Intersection Observer API 中的 Thresholds 来深入了解阈值是如何使用的。阈值的默认值为 0.0。
+});
+// start observing
+observer.observe(ele); // 观察
+observer.unobserve(ele) // 停止
+
+
+15、渐进式图片
+
+Baseline JPEG与Progressive JPEG的差异
+Baseline JPEG
+
+这种类型的JPEG文件存储方式是按从上到下的扫描方式，把每一行顺序的保存在JPEG文件中。打开这个文件显示它的内容时，
+数据将按照存储时的顺序从上到下一行一行的被显示出来，直到所有的数据都被读完，就完成了整张图片的显示。
+如果文件较大或者网络下载速度较慢，那么就会看到图片被一行行加载的效果，这种格式的JPEG没有什么优点，
+因此，一般都推荐使用Progressive JPEG。
+
+
+
+Progressive JPEG
+
+和Baseline一遍扫描不同，Progressive JPEG文件包含多次扫描，这些扫描顺寻的存储在JPEG文件中。
+打开文件过程中，会先显示整个图片的模糊轮廓，随着扫描次数的增加，图片变得越来越清晰。
+这种格式的主要优点是在网络较慢的情况下，可以看到图片的轮廓知道正在加载的图片大概是什么。在一些网站打开较大图片时，你就会注意到这种技术。

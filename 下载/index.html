@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>下载</title>
+  </head>
+  <body>
+    <!-- txt,png这些文件，不加download属性，点击链接浏览器会直接打开文件(预览文件), 需要加上download属性进行下载处理 -->
+    <!-- 
+      txt，js，css，png 等可访问的静态资源地址也会被直接打开（这或许叫预览，两种形式，一种是预览文件，另一种是下载文件）而不是下载。
+     -->
+
+     <!-- 
+      下载跨域链接，那么其实download的效果就会没了
+      -->
+    <!-- 像zip文件，浏览器不会直接打开，会下载处理 -->
+    <a href="./a.txt" download="logo">下载文件</a>
+
+    <button id="btn">二进制流下载</button>
+
+    <script>
+      const btnEle = document.querySelector("#btn");
+      // 根据二进制流，动态生成url，然后利用a标签的download属性，完成下载
+      btnEle.addEventListener("click", (e) => {
+        const str = "这是文件内容";
+        // 二进制对象
+        const blob = new Blob([str], {
+          type: "text/plain", // mine类型
+        });
+        // text/html：HTML 格式的文本文档
+        // text/plain：普通的 ASCII 文本文档
+        // image/jpeg：JPEG格式的图片
+
+        // 生成url
+        const url = URL.createObjectURL(blob);
+
+        // 创建a标签下载
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "xx";
+        // document.body.appendChild(a);
+        a.click();
+        // document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    </script>
+  </body>
+</html>

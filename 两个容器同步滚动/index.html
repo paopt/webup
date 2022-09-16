@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>两个容器同步滚动</title>
+    <style>
+      .container {
+        display: flex;
+      }
+
+      .left {
+        height: 400px;
+        width: 200px;
+        border: 1px solid red;
+        overflow: auto;
+        margin-right: 100px;
+      }
+
+      .right {
+        height: 400px;
+        width: 200px;
+        border: 1px solid blue;
+        overflow: auto;
+      }
+
+      .content {
+        height: 1000px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="content"></div>
+      </div>
+      <div class="right">
+        <div class="content"></div>
+      </div>
+    </div>
+
+    <script>
+      // 两个容器相互触发滚动事件会出现问题
+      // 要判断鼠标在哪个容器上滚动, 同一时刻只监听一个容器的滚动事件
+      // 这里直接使用别人写的
+      function combinedScroll() {
+        // 获取元素
+        var left = document.querySelector(".left");
+        var right = document.querySelector(".right");
+
+        // 绑定左边的滚动事件
+        function bindEventLeft() {
+          removeEventRight(); //关键点-先解绑右边
+          left.addEventListener("scroll", leftScroll);
+        }
+        // 绑定右边的滚动事件
+        function bindEventRight() {
+          removeEventLeft(); //关键点-先解绑左边
+          right.addEventListener("scroll", rightScroll);
+        }
+
+        //   解绑左边的滚动事件
+        function removeEventLeft() {
+          left.removeEventListener("scroll", leftScroll);
+        }
+
+        //   解绑右边的滚动事件
+
+        function removeEventRight() {
+          right.removeEventListener("scroll", rightScroll);
+        }
+
+        // 左边滚动时候，右边同步
+        function leftScroll() {
+          var a = left.scrollTop;
+          right.scrollTop = a;
+        }
+
+        // 右边滚动时候，左边同步
+        function rightScroll() {
+          var a = right.scrollTop;
+          left.scrollTop = a;
+        }
+        left.addEventListener("mouseover", bindEventLeft);
+        right.addEventListener("mouseover", bindEventRight);
+      }
+
+      // 调用
+      combinedScroll();
+    </script>
+  </body>
+</html>

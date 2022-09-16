@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下拉菜单</title>
+  <style>
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border: 1px solid rgba(0,0,0,.15);
+      border-radius: 4px;
+      box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+    }
+
+    .dropdown-menu li {
+      min-width: 100px;
+      height: 30px;
+      padding: 0 10px;
+      line-height: 30px;
+      cursor: pointer;
+    }
+
+    .dropdown-menu li:hover {
+      background-color: #e8e8e8;
+    }
+
+    .dropdown.open .dropdown-menu {
+      display: block;
+    }
+
+    .caret {
+      display: inline-block;
+      width: 0;
+      height: 0;
+      margin-left: 2px;
+      vertical-align: middle;
+      border-top: 4px dashed #000;
+      border-right: 4px solid transparent;
+      border-left: 4px solid transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="dropdown">
+    <button class="dropdown-toggle">
+      dropdown
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li id="add">增</li>
+      <li id="delete">删</li>
+      <li id="edit">改</li>
+      <li id="query">查</li>
+    </ul>
+  </div>
+
+  <script>
+    const dropdownEle = document.querySelector('.dropdown');
+    const btnEle = document.querySelector('.dropdown-toggle');
+    const menuEle = document.querySelector('.dropdown-menu');
+
+    btnEle.addEventListener('click', e => {
+      dropdownEle.classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+      const arr = e.composedPath() || e.path;
+      // 事件没有经过dropdown节点，关闭菜单
+      if (!arr.includes(dropdownEle)) {
+        dropdownEle.classList.remove('open');
+      }
+    });
+
+    menuEle.addEventListener('click', e => {
+      if(e.target.nodeName === 'LI') {
+        console.log('点击菜单' + e.target.id);
+        dropdownEle.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>

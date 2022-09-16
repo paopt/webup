@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>虚拟滚动-等高</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .item {
+      position: absolute;
+      height: 100px;
+      width: 100%;
+      border-bottom: 2px solid black;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <div class="wrap" id="wrap">
+    </div>
+  </div>
+  <script>
+    function throttle(fn, wait) {
+      let timeout;
+      return function () {
+        const ctx = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          fn.apply(ctx, args);
+        }, wait);
+      };
+    }
+
+    // 总数据
+    const arr = [];
+    for (let i = 0; i < 20000; i++) {
+      arr.push({
+        value: '列表' + i
+      });
+    }
+
+    // 已加载数据
+    const currentArr = arr.slice(0, 20);
+    let start = 0;
+    let end = 20;
+
+    let page = 1;
+    let isRequest = false; 
+    const itemH = 100;
+    
+    const wrapEle = document.querySelector("#wrap");
+    const containerEle = document.querySelector("#container");
+    const containerH = containerEle.offsetHeight;
+    // 可以显示多少条数据
+    const NUM = Math.ceil(containerH / itemH);
+
+    // 更新数据, isDown, 向下滚动
+    const update = () => {
+      wrapEle.style.height = currentArr.length * itemH + 'px';
+      wrapEle.innerHTML = '';
+      const doc = document.createDocumentFragment();
+      for (let i = start; i < end; i++) {
+        const ele = document.createElement('div');
+        ele.textContent = currentArr[i].value;
+        ele.style.top = i * itemH + 'px';
+        ele.classList.add('item');
+        doc.appendChild(ele);
+      };
+      wrapEle.appendChild(doc);
+    };
+    
+    const handleScroll = throttle(e => {
+      const scrollTop = containerEle.scrollTop;
+      const height = currentArr.length * itemH - scrollTop - containerH;
+      if (height < itemH * 3 && !isRequest) {
+        isRequest = true;
+        // 加载下一页数据
+        setTimeout(() => {
+          currentArr.push(...arr.slice(page * 20, (page+1)*20));
+          page++;
+          handleScroll();
+          isRequest = false;
+        }, 500);
+      }
+
+      // 在这里可以优化
+      start = Math.floor(scrollTop / itemH);
+      end = start + Math.ceil(containerH / itemH);
+      requestAnimationFrame(() => {
+        update();
+      });
+    }, 0);
+    
+    containerEle.addEventListener('scroll', handleScroll);
+
+    handleScroll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>表格head固定，body滚动</title>
+    <style>
+      #head {
+        width: 400px;
+        overflow: hidden;
+      }
+
+      #body {
+        width: 400px;
+        height: 400px;
+        overflow: auto;
+      }
+
+      #thead {
+        position: relative;
+      }
+
+      table {
+        width: 100%;
+        border: 1px solid black;
+        text-align: center;
+        background-color: #70db93;
+        border-collapse: collapse; /* 合并相邻边框*/
+        table-layout: fixed;
+        /* 表格布局算法
+          fixed：固定布局快，水平宽度由表格宽度、列宽度决定，与内容无关。没有指定列宽度平分。可能会出现溢出情况。
+          auto：自动布局，由内容决定。默认
+        */
+        overflow: auto;
+      }
+      th {
+        width: 70px;
+        border: 1px solid black;
+        color: black;
+      }
+      td {
+        width: 70px;
+        border: 1px solid black;
+        color: #8e2323;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 一个表格无法实现，两个表格，并监听滚动事件，同步修改表格位置 -->
+      <div id="head">
+        <table id="thead">
+          <tr>
+            <th>名称</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>时长</th>
+            <th>名称</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>时长</th>
+            <th>名称</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>时长</th>
+          </tr>
+        </table>
+      </div>
+      <div id="body">
+        <table id="tbody"></table>
+      </div>
+    <script>
+      const theadEle = document.querySelector("#thead");
+      const tbodyEle = document.querySelector("#tbody");
+
+      let str = "";
+      for (let i = 1; i < 100; i++) {
+        str += `
+          <tr>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+            <td>aaa</td>
+          </tr>
+        `;
+      }
+      tbodyEle.innerHTML = str;
+
+      const headEle = document.querySelector('#head');
+      const bodyEle = document.querySelector('#body');
+      bodyEle.addEventListener('scroll', e => {
+        theadEle.style.right = bodyEle.scrollLeft + 'px';
+        // headEle.scrollLeft = bodyEle.scrollLeft;
+        //这种方法滚动到最后，表格会错位，因为body表格宽度比head表格宽度少（垂直滚动条的原因） 
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ajax使用</title>
+</head>
+<body>
+  <button id="btn">发送请求</button>
+  <script>
+    const btnEle = document.querySelector('#btn');
+    btnEle.addEventListener('click', e => {
+      send();
+    });
+
+    /* 实例属性
+    1、readState表示xhr实例状态的状态，状态变化调用onreadystatechange函数，有下列值：
+      0，实例创建，open没有调用
+      1，open调用，send没有调用
+      2，send已经调用，服务器返回的头信息已经收到
+      3，正在接收数据
+      4，请求完成
+    2、response，服务器返回的数据体，即http的body部分，格式取决于responseType。返回数据不完整或失败时，response等于null。
+    3、responseType，告诉浏览器如何解析返回的数据，可以与服务器返回类型不一致
+      ""（空字符串）：等同于text，表示服务器返回文本数据。
+      "arraybuffer"：ArrayBuffer 对象，表示服务器返回二进制数组。
+      "blob"：Blob 对象，表示服务器返回二进制对象。
+      "document"：Document 对象，表示服务器返回一个文档对象。
+      "json"：JSON 对象。
+      "text"：字符串
+    4、status，状态码
+    5、withCredentials，跨域请求时，是否携带cookie，默认false。服务器必须显式返回Access-Control-Allow-Credentials
+    6、upload，上传文件对象，可以监听上传进度
+    */
+
+    /* 方法
+    1、open(method, url, async, user, password)，初始化xhr对象。
+      method： GET、PUT、DELETE、POST、HEAD
+      async：是否异步，默认true
+
+    2、send(body?)，发送请求，参数可选，代表数据体
+    3、setRequestHeader(key, value)，设置请求头，open之后，send之前。
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Content-Length', JSON.stringify(data).length);
+    4、overrideMimeType(), 覆盖服务器返回类型
+    5、getResponseHeader(), getAllResponseHeaders()返回字符串, 获取头信息
+    6、abort，终止发出的请求，readState为4，status为0
+    */
+    function send() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('post', 'https://cnodejs.org/api/v1/topics');
+      xhr.responseType = 'json';
+      // xhr.timeout = 100;
+      // xhr.withCredentials = true;
+      // xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      const data = {
+        aaa: 111
+      };
+      xhr.send(JSON.stringify(data));
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log(typeof xhr.response);
+          console.log(xhr.response);
+        }
+        // console.log(typeof xhr.getAllResponseHeaders()); 返回字符串
+      };
+      xhr.ontimeout = () => {
+        console.log('超时了');
+      };
+      xhr.onprogress = function (event) {
+        // console.log(event.loaded);
+        // console.log(event.total);
+      };
+    }
+  </script>
+</body>
+</html>
+
+<!-- 
+  浏览器引入了Navigator.sendBeacon()方法。这个方法还是异步发出请求，但是请求与当前页面线程脱钩，作为浏览器进程的任务，因此可以保证会把数据发出去，不拖延卸载流程。
+  window.addEventListener('unload', logData, false);
+  function logData() {
+    navigator.sendBeacon('/log', JSON.stringify({
+      some: "data"
+    }));
+  }
+
+  这个方法的返回值是一个布尔值，成功发送数据为true，否则为false。
+该方法发送数据的 HTTP 方法是 POST，可以跨域，类似于表单提交数据。它不能指定回调函数。
+ -->

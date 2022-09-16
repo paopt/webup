@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>左侧内容与右侧导航联动</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      .container {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+
+      .main {
+        flex: 1;
+      }
+
+      .main .section:nth-child(1) {
+        height: 400px;
+        background-color: rgb(157, 102, 102);
+      }
+
+      .main .section:nth-child(2) {
+        height: 500px;
+        background-color: rgb(78, 160, 163);
+      }
+
+      .main .section:nth-child(3) {
+        height: 600px;
+        background-color: rgb(180, 61, 144);
+      }
+
+      .main .section:nth-child(4) {
+        height: 800px;
+        background-color: rgb(193, 195, 72);
+      }
+
+      .nav {
+        position: fixed;
+        top: 20px;
+        right: 0;
+        width: 200px;
+      }
+
+      .nav .item {
+        height: 30px;
+        line-height: 30px;
+      }
+
+      .nav .item:hover {
+        background-color: #eee;
+      }
+
+      .nav .item.active {
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main">
+        <div class="section">
+          <h2>导航一</h2>
+          <div class="content">导航一内容</div>
+        </div>
+        <div class="section">
+          <h2>导航二</h2>
+          <div class="content">导航二内容</div>
+        </div>
+        <div class="section">
+          <h2>导航三</h2>
+          <div class="content">导航三内容</div>
+        </div>
+        <div class="section">
+          <h2>导航四</h2>
+          <div class="content">导航四内容</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="item">导航一</div>
+        <div class="item">导航二</div>
+        <div class="item">导航三</div>
+        <div class="item">导航四</div>
+      </div>
+    </div>
+<!--
+  实现思路：
+  1、首先左侧内容块和右侧菜单建立关联，这里是通过索引。
+  2、点击右侧菜单时时，根据菜单索引index，计算对应的内容块距离文档顶部的距离top，然后滚动top距离
+  3、监听scroll事件，把滚动距离scrollTop与每一个内容块的top距离比较，得出正在显示的内容块index，选中对应的菜单
+ -->
+
+ <!-- 
+  使用scrollIntoView,getBoundingClientRect也可以实现
+  -->
+    <script>
+      const mainEle = document.querySelector(".main");
+      const navEle = document.querySelector(".nav");
+
+      // 获取元素距离文档顶部的距离
+      function getTop(ele) {
+        let sum = ele.offsetTop;
+        let parent = ele.offsetParent;
+        while (parent) {
+          sum += parent.offsetTop;
+          parent = parent.offsetParent;
+        }
+        return sum;
+      }
+
+      // 点击左侧菜单
+      navEle.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("item")) {
+          const arr = Array.from(navEle.querySelectorAll(".item"));
+          for (let ele of arr) {
+            ele.classList.remove("active");
+          }
+          target.classList.add("active");
+          const index = arr.indexOf(target);
+          const sectionEle = mainEle.querySelectorAll(".section")[index];
+          const top = getTop(sectionEle);
+          window.scrollTo(0, top - 50);
+        }
+      });
+
+      window.addEventListener('scroll', e => {
+        update();
+      });
+
+      function update() {
+        const top = window.scrollY;
+        const arr = Array.from(mainEle.querySelectorAll('.section'));
+        arr.forEach((ele, index) => {
+          const offsetTop = getTop(ele);
+          // 当内容与顶部含有50px时，选中菜单
+          if (top + 50 >= offsetTop) {
+            const arr = Array.from(navEle.querySelectorAll(".item"));
+            for (let ele of arr) {
+              ele.classList.remove("active");
+            }
+            arr[index].classList.add('active');
+          }
+
+          // 滚动到底部时
+          // const html = document.documentElement;
+          // if (html.scrollHeight === html.scrollTop + html.offsetHeight) {
+
+          // }
+        });
+      }
+
+      update();
+    </script>
+  </body>
+</html>

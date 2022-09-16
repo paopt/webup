@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轮播</title>
+  <style>
+    .carousel-container {
+      position: relative;
+      width: 400px;
+      overflow: hidden;
+    }
+    .carousel-list {
+      display: flex;
+      position: relative;
+      transition: transform 1s;
+    }
+    .carousel-item {
+      position: relative;
+      height: 300px;
+      flex: 1 0 400px;
+      background-color: aquamarine;
+      transition: none;
+    }
+    .carousel-control {
+      position: absolute;
+      font-size: 36px;
+      color: aliceblue;
+      cursor: pointer;
+      top: 50%;
+      transform: translate3d(0, -50%, 0);
+    }
+    .carousel-control.prev {
+      left: 20px;
+    }
+
+    .carousel-control.next {
+      right: 20px;
+    }
+
+    .carousel-dots  {
+      position: absolute;
+      display: flex;
+      left: 50%;
+      bottom: 20px;
+      transform: translate3d(-50%, 0, 0);
+      list-style: none;
+      padding: 0;
+    }
+
+    .carousel-dots  li {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      background-color: transparent;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    .carousel-dots  li.active {
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="carousel-container">
+    <div class="carousel-list">
+      <div class="carousel-item">图片1</div>
+      <div class="carousel-item">图片2</div>
+      <div class="carousel-item">图片3</div>
+      <div class="carousel-item">图片4</div>
+      <div class="carousel-item">图片5</div>
+    </div>
+    <div class="prev carousel-control">&lt;</div>
+    <div class="next carousel-control">&gt;</div>
+    <ul class="carousel-dots">
+      <li data-index="1"></li>
+      <li data-index="2"></li>
+      <li data-index="3"></li>
+      <li data-index="4"></li>
+      <li data-index="5"></li>
+    </ul>
+  </div>
+
+  <script>
+    const listEle = document.querySelector('.carousel-list');
+    const prevEle = document.querySelector('.prev');
+    const nextEle = document.querySelector('.next');
+    const dotsEle = document.querySelector('.carousel-dots');
+    const width = listEle.offsetWidth; // 每页宽度
+    const num = listEle.childElementCount; // 分页数量
+
+    let index = 1; // 显示第几页;
+    let timer = null; // 定时器
+    let interval = 2000; // 时间间隔
+    let autoRun = true; // 是否自动运行
+
+    setCurrent(index);
+
+    run();
+
+    prevEle.addEventListener('click', e => {
+      setCurrent(index-1);
+    });
+    nextEle.addEventListener('click', e => {
+      setCurrent(index+1);
+    });
+    dotsEle.addEventListener('click', e => {
+      const idx = e.target.dataset.index;
+      if (idx !== undefined) {
+        setCurrent(idx);
+      }
+    });
+
+    // 鼠标移入，停止自动运行
+    prevEle.addEventListener('mouseenter', e => {
+      clearInterval(timer);
+    });
+    nextEle.addEventListener('mouseenter', e => {
+      clearInterval(timer);
+    });
+    dotsEle.addEventListener('mouseenter', e => {
+      clearInterval(timer);
+    });
+
+    // 鼠标离开，继续自动运行
+    prevEle.addEventListener('mouseleave', e => {
+      run()
+    });
+    nextEle.addEventListener('mouseleave', e => {
+      run();
+    });
+    dotsEle.addEventListener('mouseleave', e => {
+      run();
+    });
+
+    // 自动运行
+    function run() {
+      if (!autoRun) {
+        return;
+      }
+
+      timer = setInterval(() => {
+        setCurrent(index + 1);
+      }, interval);
+    }
+
+    function setActiveDot() {
+      for (const ele of dotsEle.children) {
+        ele.classList.remove('active');
+      }
+      dotsEle.children[index-1].classList.add('active');
+    }
+
+    // 设置当前页
+    function setCurrent(cur) {
+      listEle.style.transition = 'transform 1s';
+      if (cur < 1) {
+        // 第一页到最后一页切换
+        // 改变最后一页的left值，在第一页的左边
+        const lastEle = listEle.children[num-1];
+        const dis = -num * width + 'px';
+        lastEle.style.left = dis;
+        // 设置偏移
+        const dis2 = width + 'px';
+        listEle.style.transform = 'translate3d(' + dis2 + ', 0, 0)';
+        // 设置当前页数
+        index = num;
+        setActiveDot();
+        // 与动画时间相同，还原最后一页left值，移动到最后一张，同时取消动画
+        setTimeout(() => {
+          lastEle.style.lef = 0;
+          const dis = (index - 1) * width + 'px';
+          listEle.style.transition = 'none';
+          listEle.style.transform = 'translate3d(' + dis + ', 0, 0)'
+        }, 1000);
+      } else if (cur > 5) {
+        // 最后一页到第一页切换
+        const firstEle = listEle.children[0];
+        const dis = num * width + 'px';
+        firstEle.style.left = dis;
+        const dis2 = -num * width + 'px';
+        listEle.style.transform = 'translate3d(' + dis2 + ', 0, 0)';
+        index = 1;
+        setActiveDot();
+        setTimeout(() => {
+          firstEle.style.left = 0;
+          listEle.style.transition = 'none';
+          listEle.style.transform = 'translate3d(0, 0, 0)';
+        }, 500);
+      } else {
+        // 中间页切换
+        const pos = cur > index ? -1 : 1;
+        const dis = pos * (cur -1) * width + 'px';
+        listEle.style.transform = 'translate3d(' + dis + ', 0, 0)';
+        index = cur;
+        setActiveDot();
+      }
+    }
+  </script>
+</body>
+</html>

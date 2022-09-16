@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>瀑布流</title>
+  <style>
+    .container {
+      position: relative;
+      width: 100%;
+    }
+
+    .item {
+      position: absolute;
+      width: 200px;
+      margin: 10px;
+    }
+
+    .item img {
+      width: 100%;
+    }
+
+    .red  {
+      height: 200px;
+      background-color: red;
+    }
+
+    .green {
+      height: 300px;
+      background-color: green;
+    }
+
+    .blue {
+      height: 400px;
+      background-color: blue;
+    }
+  </style>
+</head>
+<!-- 
+瀑布流布局的原理
+瀑布流布局要求要进行布置的元素等宽，然后计算元素的宽度与浏览器宽度之比，得到需要布置的列数。
+创建一个数组，长度为列数，里面的值为每列元素的总高度（最开始为0）
+然后将未布置的元素依次布置到高度最小的那一列，就得到了瀑布流布局。
+利用绝对定位absolute,通过JS计算每个item的的top和left值
+ -->
+<body>
+  <div class="container">
+
+  </div>
+  <script>
+    function createData() {
+      const container = document.querySelector('.container');
+      const num = 200;
+      const doc = document.createDocumentFragment();
+      for (let i = 0; i < num; i++) {
+        const ele = document.createElement('div');
+        ele.classList.add('item');
+        const imgIndex = Math.floor(Math.random() * 30);
+        const img = new Image();
+        img.src = './imgs/' + imgIndex + '.webp';
+        ele.appendChild(img);
+        doc.appendChild(ele);
+      }
+      container.appendChild(doc);
+    }
+
+    // 添加一些假数据
+    createData();
+
+    const container = document.querySelector('.container');
+    const itemWidth = 200; // 每个子元素的宽度
+    const gap = 10; // 元素之间的间隙
+    const cols = Math.floor(container.offsetWidth / (itemWidth + gap * 2)); // 显示几列
+    const arr = new Array(cols).fill(0); // 每列的高度
+
+    // 图片加载完，重新布局
+    window.onload = function() {
+      waterFlow();
+    }
+
+    function waterFlow() {
+      const itemList = container.children;
+      // 先设置第一行
+      for (let i = 0; i < cols; i++) {
+        const ele = itemList[i];
+        if (ele) {
+          ele.style.top = 0;
+          ele.style.left = i * (itemWidth + gap * 2) + 'px';
+          const imgHeight = ele.querySelector('img').offsetHeight;
+          // ele.style.height = imgHeight + 'px';
+          arr[i] = imgHeight  + gap * 2;
+        }
+      }
+
+      for (let i = cols; i < itemList.length; i++) {
+        const ele = itemList[i];
+        const index = getMinHeightIndex();
+        ele.style.left = index * (itemWidth + gap * 2) + 'px';
+        ele.style.top = arr[index] + 'px';
+        const imgHeight = ele.querySelector('img').offsetHeight;
+        // ele.style.height = imgHeight + 'px';
+        arr[index] = arr[index] + imgHeight + gap * 2;
+      }
+    }
+
+    function getMinHeightIndex() {
+      let min = arr[0];
+      let index = 0;
+      for (let i = 1; i < arr.length; i++) {
+        if (min > arr[i]) {
+          min = arr[i];
+          index = i;
+        }
+      }
+      return index;
+    }
+  </script>
+</body>
+</html>
+

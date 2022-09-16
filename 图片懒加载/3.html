@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片懒加载-js原生实现</title>
+    <style>
+      .item {
+        width: 400px;
+        height: 400px;
+      }
+
+      img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+
+    <script>
+      const containerEle = document.querySelector(".container");
+      const doc = document.createDocumentFragment();
+      for (let i = 0; i < 31; i++) {
+        const div = document.createElement("div");
+        div.classList.add("item");
+        const img = document.createElement("img");
+        img.dataset.src = "./imgs/" + i + ".webp";
+        div.appendChild(img);
+        doc.appendChild(div);
+      }
+      containerEle.appendChild(doc);
+
+      let images = document.querySelectorAll("img");
+      let viewHeight = window.innerHeight; //可视区域高度
+      let n = 0; //记录已触发渲染图片的数量
+
+      function loadLazy() {
+        for (let i = n; i < images.length; i++) {
+          //判断图片的top属性是否小于可视区域高度，是就说明要设置 src
+          if (images[i].getBoundingClientRect().top < viewHeight) {
+            images[i].src = images[i].getAttribute("data-src");
+            // 下次循环时，从最后设置 src的图片的下一张开始
+            n = i + 1;
+          } else {
+            break;
+          }
+        }
+
+        // rect top属性，如果有滚动条，滚动时top可能为负值
+
+      loadLazy();
+      window.addEventListener("scroll", loadLazy);
+
+
+      // 需要自己手动去计算，并且会引起回流与重绘，性能相对来说较差，
+    </script>
+  </body>
+</html>

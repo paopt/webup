@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fetch使用</title>
+</head>
+<body>
+  <button id="btn">发送请求</button>
+  <script>
+    const btnEle = document.querySelector('#btn');
+    btnEle.addEventListener('click', e => {
+      send();
+    });
+
+    /* fetch配置参数
+    body : http请求参数
+    mode : 指定请求模式。
+        cros:允许跨域（为默认值）
+        same-origin:只允许同源请求;
+        no-cros:只限于get、post和head,并且只能使用有限的几个简单标头。
+    cache : 用户指定缓存。
+    method : 请求方法，默认GET
+    signal : 一个 AbortSignal 对象实例，用于和 AbortController 通信中断请求
+    headers : http请求头设置
+    keepalive : 用于页面卸载时，告诉浏览器在后台保持连接，继续发送数据。
+    credentials : cookie设置，
+        omit:忽略不带cookie（默认），
+        same-origin:同源请求带cookie，
+        inclue:无论跨域还是同源都会带cookie。
+    */
+
+    /*
+      fetch 请求成功后，响应 response 对象
+      statusText - 服务器返回状态文字描述
+      ok - 返回布尔值，如果状态码 2 开头的，则 true,反之 false
+      status - http 状态码，范围在 100-599 之间
+      headers - 响应头
+      body - 响应体。响应体内的数据，根据类型各自处理。
+      type - 返回请求类型。
+      redirected - 返回布尔值，表示是否发生过跳转。
+    */
+
+    /*
+    读取响应数据
+    response 对象根据服务器返回的不同类型数据，提供了不同的读取方法。
+    response.text() -- 得到文本字符串
+    response.json() - 得到 json 对象
+    response.blob() - 得到二进制 blob 对象
+    response.formData() - 得到 fromData 表单对象
+    response.arrayBuffer() - 得到二进制 arrayBuffer 对象
+    */
+    function send() {
+     fetch('https://cnodejs.org/api/v1/topics',{
+      method: 'get',
+      headers: {
+        'content-type': 'application/json'
+      },
+      // body: JSON.stringify({a:1}), // 浏览器默认给请求 Content-Type 的赋值是 text/plain。提交 json 数据时，需要把 json 转换成字符串
+      // mode: 'same-origin',
+      // credentials: 'include',
+      // signal, 用于取消fetch
+     }).then(res => {
+      console.log(res.body); // ReadableStream 流对象
+      return res.json();
+     }).then(
+      res => { // 请求完成进入，与状态码无关
+        console.log(res);
+      },
+      err => { // 发生网络请求错误时，会进来
+        console.log(err);
+      });
+    }
+  </script>
+</body>
+</html>
+
+
+<!-- 
+// 获取AbortController对象
+const abortController = new AbortController();
+// 获取AbortSignal对象
+const { signal } = abortController;
+
+// 在配置中携带该signal
+fetch('https://jsonplaceholder.typicode.com/posts/1', { signal })
+  .then((res) => {
+    console.log('res', res);
+  })
+  .catch((err) => {
+    // 会捕捉到一个AbortError
+    console.log('1st abort error:\n', err);
+  });
+
+// 请求发出后立刻中止请求
+abortController.abort(); 
+-->
+
+
+<!-- 
+  fetch 优点：
+
+使用更方便。fetch 是浏览器原生支持的请求方法，也已直接在浏览器中使用，也可以在代码中随时使用，而不需要像 axios 一样引入第三方包
+脱离了浏览器的 XHR，是 ES 规范里新的实现方式
+是基于 promise 的异步请求
+
+fecth 缺点：
+fetch 携带的参数如果是 json 对象需要转换为 json 字符串，axios 可以直接传对象
+fetch 只对网络请求报错，对 400，500 都当做成功的请求，需要封装去处理。xhr 自带请求取消、错误等方法，所以服务器返回 4xx 或 5xx 时，axios 会抛出错误，并取消请求
+fetch 默认不会带 cookie，需要添加配置项 credentials:'include'才会携带 cookie
+fetch 不支持 abort，不支持超时控制，使用 setTimeout 及 Promise.reject 的实现的超时控制并不能阻止请求过程继续在后台运行，造成了量的浪费
+fetch 没有办法原生监测请求的进度，而 XHR 可以
+ -->

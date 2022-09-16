@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>滚动加载</title>
+  <style>
+    .list {
+      width: 300px;
+      height: 400px;
+      border: 1px solid red;
+      overflow: auto;
+    }
+
+    .item {
+      height: 30px;
+      line-height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <ul class="list"></ul>
+  <script>
+    const container = document.querySelector('.list');
+    const data = createData();
+  
+    // mock数据
+    function createData() {
+      const data = [];
+      for(let i = 0; i < 1000; i++) {
+        data.push({
+          name: 'hello',
+          index: i
+        });
+      }
+      return data;
+    }
+
+    // 查询数据
+    function getData(page, size) {
+      const begin = (page - 1) * size;
+      const end = Math.min(begin + size, data.length);
+      return data.slice(begin, end);
+    }
+
+    // 渲染数据
+    function fill(data) {
+      let str = '';
+      data.forEach(item => {
+        str += '<li class="item">' + item.index + '   ' + item.name + '</li>';
+      });
+      container.innerHTML = container.innerHTML + str;
+    }
+
+
+    let current = 1; //第几页
+    const size = 20; // 每页数量
+    const count = 1000; // 总数
+
+    const list = getData(current, size);
+    fill(list);
+
+    // 监听container滚动事件，必要时加载下一页数据
+    container.addEventListener('scroll', e => {
+      // 计算滚动条是否滚动到了底部
+      const isNearBottom = container.scrollHeight - (container.clientHeight + container.scrollTop) < 30;
+      if (isNearBottom) {
+        / /加载下一页数据
+        if (list.length < 1000) {
+          current++;
+          const arr = getData(current, size);
+          list.push(...arr);
+          fill(arr);
+        } 
+      }
+    })
+
+  </script>
+</body>
+</html>

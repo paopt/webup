@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>返回顶部</title>
+</head>
+<body>
+  <div style="height: 2000px;">
+    我很高，滚到底
+  </div>
+
+  <!-- 方法一，使用锚点 -->
+  <a href="#top">返回顶部1</a>
+  <a href="#" id="backTop">返回顶部2</a>
+
+
+  <script>
+    // 方法二，js控制滚动
+    const ele = document.querySelector('#backTop');
+    ele.style.display = 'none';
+
+    ele.addEventListener('click', e => {
+      // window.scrollTo(0, 0);
+      scrollTop(window.scrollY);
+    });
+    window.addEventListener('scroll', e => {
+      if (window.scrollY > 1000) {
+        ele.style.display = 'inline';
+      } else {
+        ele.style.display = 'none';
+      }
+    });
+
+    function scrollTop(dis) {
+      requestAnimationFrame(() => {
+        if (dis > 100) {
+          window.scrollTo(0, dis-100);
+          scrollTop(dis-100);
+        } else {
+          window.scrollTo(0, 0);
+        }
+      })
+    }
+  </script>
+</body>
+</html>

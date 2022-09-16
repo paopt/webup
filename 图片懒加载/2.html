@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片懒加载-IntersectionObserver实现</title>
+    <style>
+      .item {
+        width: 400px;
+        height: 400px;
+      }
 
-  <style>
-    img {
-      width: 200px;
-      height: 200px;
-    }
-  </style>
-</head>
-<body>
-  <img data-src="./img/1.jpg" >
-  <img data-src="./img/2.jpg" >
-  <img data-src="./img/3.webp" >
-  <img data-src="./img/4.webp" >
-  <img data-src="./img/5.webp" >
-  <img data-src="./img/6.webp" >
-  <img data-src="./img/7.webp" >
-  <img data-src="./img/8.webp" >
-  <img data-src="./img/9.webp" >
-  <img data-src="./img/10.webp" >
+      img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
 
-
-  <script>
+    <script>
+      const containerEle = document.querySelector(".container");
+      const doc = document.createDocumentFragment();
+      for (let i = 0; i < 31; i++) {
+        const div = document.createElement("div");
+        div.classList.add("item");
+        const img = document.createElement("img");
+        img.dataset.src = "./imgs/" + i + ".webp";
+        div.appendChild(img);
+        doc.appendChild(div);
+      }
+      containerEle.appendChild(doc);
     let options = {
       rootMargin: '0px',
       threshold: 0.5
@@ -51,7 +55,7 @@
     const imgs = document.querySelectorAll('img');
     imgs.forEach(item => {
       observer.observe(item);
-    })
+    });
   </script>
 
   </scrip>

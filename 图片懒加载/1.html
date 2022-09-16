@@ -1,21 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <img src="./img/1.jpg" loading="lazy">
-  <img src="./img/2.jpg" loading="lazy">
-  <img src="./img/3.webp" loading="lazy">
-  <img src="./img/4.webp" loading="lazy">
-  <img src="./img/5.webp" loading="lazy">
-  <img src="./img/6.webp" loading="lazy">
-  <img src="./img/7.webp" loading="lazy">
-  <img src="./img/8.webp" loading="lazy">
-  <img src="./img/9.webp" loading="lazy">
-  <img src="./img/10.webp" loading="lazy">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片懒加载-IntersectionObserver实现</title>
+    <style>
+      .item {
+        width: 400px;
+        height: 400px;
+      }
+
+      img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"></div>
+
+    <script>
+      const containerEle = document.querySelector(".container");
+      const doc = document.createDocumentFragment();
+      for (let i = 0; i < 31; i++) {
+        const div = document.createElement("div");
+        div.classList.add("item");
+        const img = document.createElement("img");
+        img.src = "./imgs/" + i + ".webp";
+        img.loading = 'lazy';
+        div.appendChild(img);
+        doc.appendChild(div);
+      }
+      containerEle.appendChild(doc);
+  </script>
+
+  <!-- 
+总结下，原生懒加载的5个行为特性：
+Lazy loading加载数量与屏幕高度有关，高度越小加载数量越少，但并不是线性关系。
+Lazy loading加载数量与网速有关，网速越慢，加载数量越多，但并不是线性关系。
+Lazy loading加载没有缓冲，滚动即会触发新的图片资源加载。
+Lazy loading加载在窗口resize尺寸变化时候也会触发，例如屏幕高度从小变大的时候。
+Lazy loading加载也有可能会先加载后面的图片资源，例如页面加载时滚动高度很高的时候。
+与JavaScript有关的几个行为特征：
+
+判断浏览器是否支持原生loading，最好使用'loading' in XXX判断。
+获取loading属性值可以直接img.loading；
+原生loading不可写，例如HTMLImageElement.prototype.loading会报错Illegal invocation。
+Polyfill就是场梦，只能等浏览器支持。
+   -->
 </body>
 </html>

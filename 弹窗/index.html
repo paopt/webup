@@ -1,12 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>弹窗</title>
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>弹窗</title>
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        pointer-events: none;
+      }
+
+      .modal-content {
+        width: 400px;
+        margin: 30px auto;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+        pointer-events: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .modal-title {
+        margin: 0;
+      }
+
+      .modal-close {
+        font-size: 21px;
+        font-weight: bold;
+        color: #000;
+        opacity: 0.2;
+        cursor: pointer;
+      }
+
+      .modal-close:hover {
+        opacity: 0.5;
+      }
+
+      .modal-body {
+        position: relative;
+        padding: 15px;
+      }
+
+      .modal-footer {
+        padding: 15px;
+        text-align: right;
+        border-top: 1px solid #e5e5e5;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(37, 43, 58, 0.2);
+        z-index: 999;
+        pointer-events: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn">打开</button>
+    <script>
+      const btn = document.querySelector("#btn");
+      const tpl = `
+        <div class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">弹窗标题</h4>
+              <span class="modal-close">×</span>
+            </div>
+            <div class="modal-body">我是弹窗内容</div>
+            <div class="modal-footer">
+              <button type="button" id="ok">确定</button>
+              <button type="button" id="cancel">取消</button>
+            </div>
+          </div>
+        </div>
+      `;
+      btn.addEventListener("click", (e) => {
+        const modal = new Modal({
+          template: tpl,
+          // backdrop: false
+        });
+        modal.open();
+
+        const okBtn = document.querySelector('#ok');
+        okBtn.addEventListener('click', e => {
+          modal.hide();
+        });
+
+        const cancelBtn = document.querySelector('#cancel');
+        cancelBtn.addEventListener('click', e => {
+          modal.hide();
+        });
+
+        const closeEle = document.querySelector(".modal-close");
+        closeEle.addEventListener("click", (e) => {
+          modal.hide();
+        });
+      });
+
+      /* options参数：
+        backdrop， 显示背景
+        keybord， 按下escape，是否关闭弹窗
+        template, 弹窗模板
+      */
+      function Modal(options) {
+        // 默认配置
+        const DEFAULTS = {
+          backdrop: true,
+          keyboard: true,
+        };
+        // 合并配置
+        this.options = { ...DEFAULTS, ...options };
+        this.modalEle = null; // 弹窗dom
+        this.backdropEle = null; // 背景dom
+        this.isOpen = false; // 是否打开弹窗
+      }
+
+      Modal.prototype.open = function () {
+        if (!this.options.template) {
+          return;
+        }
+        if (this.isOpen) {
+          return;
+        }
+
+        const div = document.createElement("div");
+        div.innerHTML = this.options.template;
+        this.modalEle = div.firstElementChild;
+        this.modalEle.style.display = "block";
+        document.body.appendChild(this.modalEle);
+        if (this.options.backdrop) {
+          this.addBackdrop();
+        }
+        this.isOpen = true;
+
+        // 处理各种关闭事件
+        if (this.options.keyboard) {
+          document.addEventListener("keyup", e => {
+            if (e.keyCode === 27 && this.isOpen) {
+              this.hide();
+            }
+          });
+        }
+      };
+
+      Modal.prototype.hide = function () {
+        if (this.modalEle) {
+          document.body.removeChild(this.modalEle);
+          this.modalEle = null;
+        }
+        if (this.backdropEle) {
+          document.body.removeChild(this.backdropEle);
+          this.backdropEle = null;
+        }
+        this.isOpen = false;
+      };
+
+      Modal.prototype.addBackdrop = function () {
+        this.backdropEle = document.createElement("div");
+        this.backdropEle.classList.add("modal-backdrop");
+        document.body.appendChild(this.backdropEle);
+        this.backdropEle.addEventListener("click", (e) => {
+          this.hide();
+        });
+      };
+    </script>
+  </body>
 </html>

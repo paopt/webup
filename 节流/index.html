@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节流</title>
+</head>
+<body>
+  <div>
+    正常<br>
+    <input type="text" id="input" autocomplete="off"><br>
+    值： <span id="value"></span>
+  </div>
+
+  <div style="margin-top: 50px;">
+    节流(就是控制执行频率)<br>，每个一段时间执行下
+    <input type="text" id="input2"><br>
+    值： <span id="value2"></span>
+  </div>
+  <script>
+    const input = document.querySelector('#input');
+    const ele = document.querySelector('#value');
+    input.addEventListener('input', e => {
+      ele.textContent = input.value;
+    });
+
+    const input2 = document.querySelector('#input2');
+    const ele2 = document.querySelector('#value2');
+
+    let fn = throttle(() => {
+      ele2.textContent = input2.value;
+    }, 2000);
+
+    function throttle(fn, interval) {
+      let now = Date.now();
+      return function(e) {
+        if (Date.now() - now >= interval) {
+          fn(e);
+          now = Date.now();
+        }
+      }
+    }
+
+    // 节流函数
+    function throttle2(fn, time) {
+        let canRun = true;
+        // 闭包
+        return function () {
+            if (!canRun) return;
+            canRun = false;
+            setTimeout(() => {
+                fn.apply(this, arguments);
+                canRun = true;
+            }, time);
+        }
+    }
+
+    input2.addEventListener('input', e => {
+      fn();
+    });
+  </script>
+</body>
+</html>

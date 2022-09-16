@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>表单</title>
+    <style>
+      .form-row {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+            function xx() {
+        console.log('阻止');
+        return false;
+      }
+    </script>
+    <!-- 阻止自动提交 ,onsubmit="return false;"-->
+    <form id="form" action="" method="post" enctype="multipart/form-data" onsubmit="return check();">
+      <div class="form-row">
+        <select name="select" id="select" value="xx">
+          <option value="dog" disabled>Dog</option>
+          <option value="cat">Cat</option>
+          <option value="hamster">Hamster</option>
+          <option value="parrot">Parrot</option>
+          <option value="spider">Spider</option>
+          <option value="goldfish">Goldfish</option>
+        </select>
+
+        <div>
+          input事件， 与change没有区别，通过select.value获取选中值: <span id="selectInput"></span><br>
+          change事件: <span id="selectChange"></span><br>
+          option: <span id="selectOption"></span><br>
+          selectedIndex: <span id="selectIndex"></span><br>
+        </div>
+      </div>
+      <div class="form-row">
+        <select name="multiselect" id="multiselect" multiple>
+          <optgroup label="4-legged pets">
+            <option value="dog">Dog</option>
+            <option value="cat">Cat</option>
+            <option value="hamster">Hamster</option>
+          </optgroup>
+          <optgroup label="Flying pets">
+            <option value="parrot">Parrot</option>
+            <option value="macaw">Macaw</option>
+            <option value="albatross">Albatross</option>
+          </optgroup>
+        </select>
+        <div>
+          change事件，通过selectedOptions获取值，或者遍历option: <span id="multiselectChange"></span><br>
+        </div>
+      </div>
+      <div class="form-row">
+        <input type="text" name="input" id="input" />
+
+        <div>
+          input事件,不停触发: <span id="einput"></span><br>
+          change事件，失去焦点: <span id="echange"></span><br>
+        </div>
+      </div>
+      <div class="form-row">
+        <input type="checkbox" name="checkbox" id="checkbox" value="dog"/>
+        <label for="checkbox">dog</label>
+
+        <div>
+          change事件，与input一样： <span id="checkboxChange"></span><br>
+          value值默认为"on"，选中、不选中值不变，使用较少。
+        </div>
+      </div>
+      <div class="form-row">
+        一般是单选按钮组, 可以设置radio value值
+        <div>
+          <input type="radio" id="contactChoice1"
+                name="contact" value="email">
+          <label for="contactChoice1">Email</label>
+          <input type="radio" id="contactChoice2"
+                name="contact" value="phone">
+          <label for="contactChoice2">Phone</label>
+          <input type="radio" id="contactChoice3"
+                name="contact" value="mail">
+          <label for="contactChoice3">Mail</label>
+        </div>
+        <div>
+          遍历单选按钮，查找选中值：<span id="radioValue"></span>
+        </div>
+      </div>
+      <div class="form-row">
+        <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg">
+      </div>
+      <div class="form-row">
+        <button id="submit" type="button">提交</button>
+        <!-- 这里button type类型，默认为submit -->
+        <!-- 输入框里按enter键，也会自动提交哦 -->
+      </div>
+    </form>
+
+    <script>
+      
+      // 多选
+      const multiselectEle = document.querySelector('#multiselect');
+      const multiselectChangeEle = document.querySelector('#multiselectChange');
+      multiselectEle.addEventListener('change', e => {
+        let str = ''
+        for (const opt of multiselectEle.selectedOptions) {
+          str += opt.value + ' ';
+        }
+        multiselectChangeEle.textContent = str;
+      });
+
+      // 单选
+      const selectEle = document.querySelector('#select');
+      const selectInputEle = document.querySelector('#selectInput');
+      const selectChangeEle = document.querySelector('#selectChange');
+      const selectOptionEle = document.querySelector('#selectOption');
+      const selectIndexEle = document.querySelector('#selectIndex'); 
+      selectEle.addEventListener('input', e => {
+        selectInputEle.textContent = e.target.value;
+        let str = ''
+        for (const opt of selectEle.children) {
+          str += opt.value + ' selected: ' + opt.selected + '<br>';
+        }
+        selectOptionEle.innerHTML = str;
+        selectIndexEle.textContent = selectEle.selectedIndex;
+      });
+      selectEle.addEventListener('change', e => {
+        selectChangeEle.textContent = e.target.value;
+      });
+
+      // 输入框
+      const inputEle = document.querySelector('#input');
+      const einputEle = document.querySelector('#einput');
+      const echangeEle = document.querySelector('#echange');
+      inputEle.addEventListener('input', e => {
+        einputEle.textContent = e.target.value;
+      });
+      inputEle.addEventListener('change', e => {
+        echangeEle.textContent = e.target.value;
+      });
+
+      // 复选框
+      const checkboxEle = document.querySelector('#checkbox');
+      const checkboxChangeEle = document.querySelector('#checkboxChange');
+      checkboxEle.addEventListener('change', e => {
+        checkboxChangeEle.textContent = checkboxEle.checked;
+      });
+
+      // 单选按钮
+      const radios = document.querySelectorAll('input[name="contact"]');
+      const radioValueEle = document.querySelector('#radioValue');
+      radios.forEach(ele => {
+        ele.addEventListener('change', e => {
+          radios.forEach(item => {
+            if (item.checked) {
+              radioValueEle.textContent = item.value;
+            }
+          })
+        })
+      });
+
+      // 文件
+      const fileEle = document.querySelector('#avatar');
+
+      fileEle.addEventListener('change', e => {
+        console.log(fileEle.files);
+      });
+
+
+      const formEle = document.querySelector('#form');
+      // const submitBtn = document.querySelector('#submit');
+      // submitBtn.addEventListener('click', e => {
+      //   const data = new FormData(formEle);
+      //   data.forEach((v, k) => {
+      //     console.log(k, v);
+      //   });
+      //   console.log(data);
+      //   return false;
+      // });
+
+      function check() {
+        console.log('表单检查');
+        return false;
+      }
+    </script>
+
+    <!-- -->
+  </body>
+</html>
