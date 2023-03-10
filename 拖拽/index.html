@@ -77,3 +77,20 @@
   </script>
 </body>
 </html>
+
+<!-- 
+  	拖拽的前提，在源目标上设置可拖拽，draggable=“true” 
+	    注意：img和a默认为true
+	一个拖拽大概只需要三个事件就可以完成，分别是ondrogstart，ondrogover，ondrop
+	
+	1，源对象 拖拽开始ondragstart
+	   设置数据  e.dataTransfer.setData("text", e.target.id);
+		
+	2.目标对象 去除ondrogover默认行为
+	    e.preventDafault();
+		
+	3,目标对象 拖拽完成drop
+	    3.1，提取数据 var id = e.dataTransfer.getData("text");
+	    3.2，根据id值得到节点 	var data = document.getElementById(id);	
+	    3.3，开始操作
+ -->

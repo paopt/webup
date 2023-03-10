@@ -7,11 +7,13 @@
   <title>固定导航栏</title>
   <style>
     .nav {
-      height: 50px;
+      height: 100px;
       background-color: #000;
     }
 
     .nav2 {
+      position: sticky;
+      top: 10px;
       height: 30px;
       width: 100%;
       background-color: red;
@@ -36,13 +38,13 @@
 
   <script>
     const ele = document.querySelector('.nav2');
-    window.addEventListener('scroll', e => {
-      if (window.scrollY > 50) {
-        ele.classList.add('fixed');
-      } else {
-        ele.classList.remove('fixed');
-      }
-    });
+    // window.addEventListener('scroll', e => {
+    //   if (window.scrollY > 100) {
+    //     ele.classList.add('fixed');
+    //   } else {
+    //     ele.classList.remove('fixed');
+    //   }
+    // });
   </script>
 </body>
 </html>

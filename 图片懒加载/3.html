@@ -38,6 +38,7 @@
 
       function loadLazy() {
         for (let i = n; i < images.length; i++) {
+          console.log(images[i].getBoundingClientRect().top);
           //判断图片的top属性是否小于可视区域高度，是就说明要设置 src
           if (images[i].getBoundingClientRect().top < viewHeight) {
             images[i].src = images[i].getAttribute("data-src");
@@ -49,11 +50,9 @@
         }
 
         // rect top属性，如果有滚动条，滚动时top可能为负值
-
+      }
       loadLazy();
       window.addEventListener("scroll", loadLazy);
-
-
       // 需要自己手动去计算，并且会引起回流与重绘，性能相对来说较差，
     </script>
   </body>

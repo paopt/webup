@@ -85,6 +85,7 @@
   </div>
 
   <script>
+    const containerEle = document.querySelector('.carousel-container');
     const listEle = document.querySelector('.carousel-list');
     const prevEle = document.querySelector('.prev');
     const nextEle = document.querySelector('.next');
@@ -115,24 +116,12 @@
     });
 
     // 鼠标移入，停止自动运行
-    prevEle.addEventListener('mouseenter', e => {
-      clearInterval(timer);
-    });
-    nextEle.addEventListener('mouseenter', e => {
-      clearInterval(timer);
-    });
-    dotsEle.addEventListener('mouseenter', e => {
+    containerEle.addEventListener('mouseenter', e => {
       clearInterval(timer);
     });
 
     // 鼠标离开，继续自动运行
-    prevEle.addEventListener('mouseleave', e => {
-      run()
-    });
-    nextEle.addEventListener('mouseleave', e => {
-      run();
-    });
-    dotsEle.addEventListener('mouseleave', e => {
+    containerEle.addEventListener('mouseleave', e => {
       run();
     });
 
@@ -171,8 +160,8 @@
         setActiveDot();
         // 与动画时间相同，还原最后一页left值，移动到最后一张，同时取消动画
         setTimeout(() => {
-          lastEle.style.lef = 0;
-          const dis = (index - 1) * width + 'px';
+          lastEle.style.left = 0;
+          const dis = -(num - 1) * width + 'px';
           listEle.style.transition = 'none';
           listEle.style.transform = 'translate3d(' + dis + ', 0, 0)'
         }, 1000);
@@ -189,11 +178,10 @@
           firstEle.style.left = 0;
           listEle.style.transition = 'none';
           listEle.style.transform = 'translate3d(0, 0, 0)';
-        }, 500);
+        }, 1000);
       } else {
         // 中间页切换
-        const pos = cur > index ? -1 : 1;
-        const dis = pos * (cur -1) * width + 'px';
+        const dis = -(cur -1) * width + 'px';
         listEle.style.transform = 'translate3d(' + dis + ', 0, 0)';
         index = cur;
         setActiveDot();

@@ -19,7 +19,7 @@
       }
     </script>
     <!-- 阻止自动提交 ,onsubmit="return false;"-->
-    <form id="form" action="" method="post" enctype="multipart/form-data" onsubmit="return check();">
+    <form id="form" action="/23" method="post" enctype="multipart/form-data" onsubmit="return check();">
       <div class="form-row">
         <select name="select" id="select" value="xx">
           <option value="dog" disabled>Dog</option>
@@ -92,7 +92,7 @@
         <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg">
       </div>
       <div class="form-row">
-        <button id="submit" type="button">提交</button>
+        <button id="submit" type="submit">提交</button>
         <!-- 这里button type类型，默认为submit -->
         <!-- 输入框里按enter键，也会自动提交哦 -->
       </div>

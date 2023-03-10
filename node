@@ -69,7 +69,7 @@ scrollLeft, scrollTop, 滚动距离
 鼠标事件
 click：按下鼠标（通常是按下主按钮）时触发。
 dblclick：在同一个元素上双击鼠标时触发。
-mousedown：按下鼠标键时触发。
+mousedown：按下鼠标键时触发。 
 mouseup：释放按下的鼠标键时触发。
 contextmenu：按下鼠标右键时（上下文菜单出现前）触发，或者按下“上下文”菜单键时触发。
 wheel：滚动鼠标的滚轮时触发，该事件继承的是WheelEvent接口。

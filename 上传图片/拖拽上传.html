@@ -28,7 +28,7 @@
   <script>
     const containerEle = document.querySelector('.container');
     containerEle.addEventListener('dragenter', e => {
-      e.preventDefault();
+      // e.preventDefault();
       e.target.style.background = 'gray';
     });
     // 默认设置为不允许接受被拖拉的元素，如果想在目标元素上放下数据，必须阻止事件的默认行为
